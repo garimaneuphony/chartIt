@@ -35,6 +35,7 @@ function Next() {
         // timePoint: packets[8]
         timePoint: mycount.current
       })
+      console.log("time", packets[8])
       DataQueueOfFp2.current.enqueue({
         name: "channel - 2",
         dataPoint: packets[1],
@@ -71,7 +72,7 @@ function Next() {
   const getData = () => {
     ipcRenderer.on("device-data",(event,packets)=>{
       setDataPackets(packets);
-      helper(packets)
+      helper(packets);
       setCount(listenerCount+1)
     })
 
