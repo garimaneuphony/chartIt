@@ -44,13 +44,14 @@ ipcMain.handle('fetch-data', async (event) => {
 
     while ((chunk=stream.read()) != null) {
         chunk.push(new Date().getTime())
-        packets_count++;
-        packets.push(chunk);
+        // packets_count++;
+        // packets.push(chunk);
 
-        if(packets_count==10){
-          mainWindow.webContents.send('device-data', packets);
-          packets=[],packets_count=0;
-        }
+        // if(packets_count==10){
+          mainWindow.webContents.send('device-data', chunk
+          );
+          // packets=[],packets_count=0;
+        // }
         await sleep(4);
     }
     mainWindow.webContents.send('fetch-data', 'completed');

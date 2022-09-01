@@ -3,46 +3,43 @@ import Head from 'next/head';
 import Link from 'next/link';
 const {ipcRenderer} = require('electron')
 import Chart from './../components/ChartComponent';
-import { Queue } from '@datastructures-js/queue';
+// import { Queue } from '@datastructures-js/queue';
 
 function Next() {
   const [isActive, setActive] = useState(true);
   const [buttonText, setButtonText] = useState('Fetch Data Stream');
   const [listenerCount, setCount] = useState(0);
-  const DataQueue = useRef(new Queue)
-  const mycount = useRef(0)
+  // const DataQueue = useRef(new Queue)
+  const [packets, setDataPackets]  = useState([]);
+  // const mycount = useRef(0)
+  // let count = 0;
 
-  const helper = packets=>{
-    for(let i=0;i<packets.length;i++){
-        DataQueue.current.enqueue({
-          name:"channel - 1",
-          dataPoint:packets[i][0],
-          timePoint:packets[i][8]
-        })
-        // DataQueue2.current.enqueue({
-        //   name:"channel - 2",
-        //   dataPoint:packets[i][1],
-        //   timePoint:packets[i][8]
-        // })
-        mycount.current++
-      if(mycount.current>100){
-        Remover()
-      }
-    }
-  }
+  // const Remover = () => {
+  //   DataQueue.current.dequeue();
+  // }
 
-  const Remover = ()=>{
-    // for(let i =0;i<DataQueue.current.size();i++){
-    //   DataQueue.current.dequeue()
-    // }
-      DataQueue.current.dequeue()
-      // DataQueue2.current.dequeue()
-  }
+  // const helper = packets => {
+  //   if (packets) {
+  //     // for(let i=0;i<packets.length;i++){
+  //     DataQueue.current.enqueue({
+  //       name: "channel - 1",
+  //       dataPoint: packets[0],
+  //       timePoint: packets[8]
+  //       // timePoint: mycount.current
+  //     })
+  //     console.log(DataQueue.current.toArray())
+  //     mycount.current++
+  //     // console.log(mycount.current);
+  //     if (mycount.current >= 1000) {
+  //       Remover()
+  //     }
+  //   }
+  // }
 
   const getData = () => {
     ipcRenderer.on("device-data",(event,packets)=>{
-      console.log(packets);
-      helper(packets)
+      setDataPackets(packets);
+      // helper(packets)
       setCount(listenerCount+1)
     })
 
@@ -62,6 +59,7 @@ function Next() {
     if(listenerCount==0) getData();
   };
 
+
   return (
     <React.Fragment>
       <Head>
@@ -80,7 +78,8 @@ function Next() {
 
       <div id="chartIt"> 
       <span className='mt-4 w-full flex-wrap flex justify-center'>⚡  Render Chart Here ⚡</span> 
-      <Chart Data={DataQueue.current}  />
+      <Chart packets={packets} />
+     
       </div> 
 
       <div className='mt-10 w-full flex-wrap flex justify-center'>
