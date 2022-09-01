@@ -3,43 +3,41 @@ import Head from 'next/head';
 import Link from 'next/link';
 const {ipcRenderer} = require('electron')
 import Chart from './../components/ChartComponent';
-// import { Queue } from '@datastructures-js/queue';
+import { Queue } from '@datastructures-js/queue';
 
 function Next() {
   const [isActive, setActive] = useState(true);
   const [buttonText, setButtonText] = useState('Fetch Data Stream');
   const [listenerCount, setCount] = useState(0);
-  // const DataQueue = useRef(new Queue)
+  const DataQueue = useRef(new Queue)
   const [packets, setDataPackets]  = useState([]);
-  // const mycount = useRef(0)
-  // let count = 0;
+  const mycount = useRef(0)
 
-  // const Remover = () => {
-  //   DataQueue.current.dequeue();
-  // }
+  const Remover = () => {
+    DataQueue.current.dequeue();
+  }
 
-  // const helper = packets => {
-  //   if (packets) {
-  //     // for(let i=0;i<packets.length;i++){
-  //     DataQueue.current.enqueue({
-  //       name: "channel - 1",
-  //       dataPoint: packets[0],
-  //       timePoint: packets[8]
-  //       // timePoint: mycount.current
-  //     })
-  //     console.log(DataQueue.current.toArray())
-  //     mycount.current++
-  //     // console.log(mycount.current);
-  //     if (mycount.current >= 1000) {
-  //       Remover()
-  //     }
-  //   }
-  // }
+  const helper = packets => {
+    if (packets) {
+      DataQueue.current.enqueue({
+        name: "channel - 1",
+        dataPoint: packets[0],
+        // timePoint: packets[8]
+        timePoint: mycount.current
+      })
+      console.log(DataQueue.current.toArray())
+      mycount.current++
+      if (mycount.current > 1000) {
+        Remover()
+      }
+    }
+  }
+
 
   const getData = () => {
     ipcRenderer.on("device-data",(event,packets)=>{
       setDataPackets(packets);
-      // helper(packets)
+      helper(packets)
       setCount(listenerCount+1)
     })
 
@@ -78,7 +76,7 @@ function Next() {
 
       <div id="chartIt"> 
       <span className='mt-4 w-full flex-wrap flex justify-center'>⚡  Render Chart Here ⚡</span> 
-      <Chart packets={packets} />
+      <Chart Data={DataQueue.current} />
      
       </div> 
 
