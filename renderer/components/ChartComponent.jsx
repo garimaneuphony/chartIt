@@ -23,7 +23,6 @@ export default function Chart({Data, label}) {
     dataKey="dataPoint"
     stroke="white"
     dot={false}
-    key={label}
   />
 </LineChart>
 </ResponsiveContainer> ) 
