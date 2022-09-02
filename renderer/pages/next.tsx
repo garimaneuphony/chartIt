@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 const {ipcRenderer} = require('electron')
@@ -9,61 +9,25 @@ function Next() {
   const [isActive, setActive] = useState(true);
   const [buttonText, setButtonText] = useState('Fetch Data Stream');
   const [listenerCount, setCount] = useState(0);
-  const DataQueueOfFp1 = useRef(new Queue);
-  const DataQueueOfFp2 = useRef(new Queue);
-  const DataQueueOfF3 = useRef(new Queue);
-  const DataQueueOfF4 = useRef(new Queue);
-  const DataQueueOfFz = useRef(new Queue);
-  const DataQueueOfPz = useRef(new Queue);
+  const DataQueue = useRef(new Queue);
   const [packets, setDataPackets]  = useState([]);
   const mycount = useRef(0)
 
-  const Remover = () => {
-    DataQueueOfFp1.current.dequeue();
-    DataQueueOfFp2.current.dequeue();
-    DataQueueOfF3.current.dequeue();
-    DataQueueOfF4.current.dequeue();
-    DataQueueOfFz.current.dequeue();
-    DataQueueOfPz.current.dequeue();
+    const Remover = () => {
+    DataQueue.current.dequeue();
   }
 
   const helper = (packets) => {
     if (packets) {
-      DataQueueOfFp1.current.enqueue({
+      DataQueue.current.enqueue({
         name: "channel - 1",
-        dataPoint: packets[0],
+        dataPoint: packets,
         // timePoint: packets[8]
         timePoint: mycount.current
       })
-      console.log("time", packets[8])
-      DataQueueOfFp2.current.enqueue({
-        name: "channel - 2",
-        dataPoint: packets[1],
-        timePoint: mycount.current
-      })
-      DataQueueOfF3.current.enqueue({
-        name: "channel - 2",
-        dataPoint: packets[2],
-        timePoint: mycount.current
-      })
-      DataQueueOfF4.current.enqueue({
-        name: "channel - 2",
-        dataPoint: packets[3],
-        timePoint: mycount.current
-      })
-      DataQueueOfFz.current.enqueue({
-        name: "channel - 2",
-        dataPoint: packets[6],
-        timePoint: mycount.current
-      })
-      DataQueueOfPz.current.enqueue({
-        name: "channel - 2",
-        dataPoint: packets[7],
-        timePoint: mycount.current
-      })
-      console.log(DataQueueOfFp1.current.toArray())
+      // console.log(DataQueue.current.toArray())
       mycount.current++
-      if (mycount.current > 999) {
+      if (mycount.current > 1000) {
         Remover()
       }
     }
@@ -111,12 +75,12 @@ function Next() {
 
       <div id="chartIt"> 
       <span className='mt-4 w-full flex-wrap flex justify-center'>⚡  Render Chart Here ⚡</span> 
-      <Chart Data={DataQueueOfFp1.current} label={'Fp1'} />
-      <Chart Data={DataQueueOfFp2.current} label={'Fp2'} />
-      <Chart Data={DataQueueOfF3.current} label={'F3'} />
-      <Chart Data={DataQueueOfF4.current} label={'F4'} />
-      <Chart Data={DataQueueOfFz.current} label={'Fz'} />
-      <Chart Data={DataQueueOfPz.current} label={'Pz'} />
+      <Chart DataQue={DataQueue.current} label={'Fp1'} index={0} />
+      <Chart DataQue={DataQueue.current} label={'Fp2'} index={1} />
+      <Chart DataQue={DataQueue.current} label={'F3'} index={2}  />
+      <Chart DataQue={DataQueue.current} label={'F4'} index={3}  />
+      <Chart DataQue={DataQueue.current} label={'Fz'} index={6}  />
+      <Chart DataQue={DataQueue.current} label={'Pz'} index={7}  /> 
       </div> 
 
       <div className='mt-10 w-full flex-wrap flex justify-center'>

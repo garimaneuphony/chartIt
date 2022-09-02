@@ -1,3 +1,4 @@
+import { useEffect, useRef} from "react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -8,13 +9,19 @@ import {
   Tooltip,
   ReferenceLine
 } from "recharts";
+import { Queue } from '@datastructures-js/queue';
 
-export default function Chart({Data, label}) {
+export default function Chart({DataQue, label, index}) {
+  const DataQueue = useRef(new Queue);
+  const countPackets = useRef(0);
+  console.log(DataQue, ++countPackets.current);
 
-  return (
+  // const filterData = () => DataQue.toArray().map(queue => ({...queue, dataPoint: queue.dataPoint[0] }))
+
+  return ( 
  <ResponsiveContainer width="100%" aspect={10}>
   <LineChart
-  data={Data.toArray()}
+  data={DataQue.toArray().map(queue => ({...queue, dataPoint: queue.dataPoint[index] }))}
 >
 <XAxis dataKey="timePoint" /> 
   <ReferenceLine y={0} stroke="lightgray" />
@@ -25,5 +32,6 @@ export default function Chart({Data, label}) {
     dot={false}
   />
 </LineChart>
-</ResponsiveContainer> ) 
+</ResponsiveContainer> 
+) 
 }
